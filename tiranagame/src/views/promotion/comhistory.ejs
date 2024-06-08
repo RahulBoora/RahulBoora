@@ -31,11 +31,11 @@
         }
 
         .c-tc.van-ellipsis.van-col.van-col--6 {
-        color: rgb(255, 255, 255);
+            color: rgb(255, 255, 255);
         }
 
         .mian .promotion[data-v-14912091] {
-        padding-top: 0.06667rem !important;
+            padding-top: 0.06667rem !important;
         }
     </style>
 </head>
@@ -58,19 +58,18 @@
                         <div class="lisys">
 
                         </div>
-                        
                     </div>
                 </div>
             </div>
             <div data-v-14912091="" class="promotion">
-                
                 <div data-v-14912091="" class="box">
                     <div data-v-14912091="" class="table">
                         <div data-v-14912091="" class="hd van-row" style="overflow: hidden;">
-                            <div data-v-14912091="" class="c-tc van-ellipsis van-col van-col--6">Time</div>
-                            <div data-v-14912091="" class="c-tc van-ellipsis van-col van-col--6">Phone</div>
-                            <div data-v-14912091="" class="c-tc van-ellipsis van-col van-col--6">Amount</div>
-                            <div data-v-14912091="" class="c-tc van-ellipsis van-col van-col--6">Invite Code</div>
+                            <div data-v-14912091="" class="c-tc van-ellipsis van-col van-col--6">Start Time</div>
+                            
+                            <div data-v-14912091="" class="c-tc van-ellipsis van-col van-col--6">Profit</div>
+                            <div data-v-14912091="" class="c-tc van-ellipsis van-col van-col--6">Balance</div>
+                            <div data-v-14912091="" class="c-tc van-ellipsis van-col van-col--6">Game</div>
                         </div>
                         <div data-v-14912091="" class="list">
                             <div data-v-14912091="" role="feed" class="van-list">
@@ -90,64 +89,121 @@
                         </div>
                     </div>
                     <!---->
-                    
                 </div>
             </div>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
             <script src="/js/client.js"></script>
             <script>
-
                 function formateT(params) {
                     let result = (params < 10) ? "0" + params : params;
                     return result;
                 }
 
-                function timerJoin(params = '', addHours = 0) {
-                    let date = '';
-                    if (params) {
-                        date = new Date(Number(params));
-                    } else {
-                        date = new Date();
-                    }
-                    let years = formateT(date.getFullYear());
-                    let months = formateT(date.getMonth() + 1);
-                    let days = formateT(date.getDate());
-
-                    let hours = date.getHours() % 12;
-                    hours = hours === 0 ? 12 : hours;
-
-                    let minutes = formateT(date.getMinutes());
-                    let seconds = formateT(date.getSeconds());
-                    return months + '-' + days + ' ' + hours + ':' + minutes;
+                function formatTime(timeStr) {
+                    const date = new Date(timeStr);
+                    const months = formateT(date.getMonth() + 1);
+                    const days = formateT(date.getDate());
+                    const hours = formateT(date.getHours());
+                    const minutes = formateT(date.getMinutes());
+                    return `${months}-${days} ${hours}:${minutes}`;
                 }
+
                 $('.nav .van-tabbar-item:eq(0) img').attr('src', '/images/home1.png');
                 $('.nav .van-tabbar-item:eq(0) .name').removeClass('action');
                 $('.nav .van-tabbar-item:eq(2) .name').addClass('action');
+
                 function MemRender(datas) {
                     let html = '';
                     datas.map((data) => {
-                        const dataF1 = parseFloat(data.f1).toFixed(2);
+                        let gameName;
+
+switch (data.app_id) {
+    case 800:
+        gameName = 'Aviator';
+        break;
+    case 801:
+        gameName = 'Aviator 1min';
+        break;
+    case 802:
+        gameName = 'Aviator 3min';
+        break;
+    case 803:
+        gameName = 'Aviator 5min';
+        break;
+        case 100:
+        gameName = 'Boom Mines';
+        break;
+        case 101:
+        gameName = 'HILO';
+        break;
+        case 102:
+        gameName = 'Fair Dice';
+        break;
+        case 103:
+        gameName = 'Plinko';
+        break;
+        case 104:
+        gameName = 'Mini Roulette';
+        break;
+        case 105:
+        gameName = 'Goal';
+        break;
+        case 106:
+        gameName = 'Keno';
+        break;
+        case 107:
+        gameName = 'Hotline';
+        break;
+        case 109:
+        gameName = 'Coin Flip';
+        break;
+        case 110:
+        gameName = 'Limbo';
+        break;
+        case 111:
+        gameName = 'Cryptos';
+        break;
+        case 112:
+        gameName = 'Triple';
+        break;
+        case 114:
+        gameName = 'Horse Racing';
+        break;
+        case 900:
+        gameName = 'Keno 80';
+        break;
+
+    // Add more cases as needed
+    default:
+        gameName = 'Unknown';
+        break;
+}
                         html += `
                         <div data-v-14912091="" class="bd van-row" style="overflow:hidden;">
-                            <div data-v-14912091="" class="c-tc van-col van-col--6">${timerJoin(data.time)}</div>
-                            <div data-v-14912091="" class="c-tc van-col van-col--6">${data.phone.slice(0, 2)}****${data.phone.slice(-4)}</div>
-                            <div data-v-14912091="" class="c-tc van-col van-col--6">${dataF1}</div>
-                            <div data-v-14912091="" class="c-tc van-col van-col--6">${data.code}</div>
+                            <div data-v-14912091="" class="c-tc van-col van-col--6">${formatTime(data.start_time)}</div>
+                            <div data-v-14912091="" class="c-tc van-col van-col--6">${data.profit}</div>
+                            <div data-v-14912091="" class="c-tc van-col van-col--6">${data.balance}</div>
+                            <div data-v-14912091="" class="c-tc van-col van-col--6">${gameName}</div>
                         </div>
                         `;
                     });
                     $('#van-list').html(html);
                     console.log(datas);
                 }
+
                 $.ajax({
-                    type: "GET",
-                    url: "/api/webapi/myTeam",
+                    type: "POST",
+                    url: "/gameLog",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        index: 0,
+                        count: 10
+                    }),
                     dataType: "json",
                     success: function (response) {
-                        MemRender(response.total_roses);
+                        MemRender(response.list);
                     }
                 });
-
             </script>
 </body>
 

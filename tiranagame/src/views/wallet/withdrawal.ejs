@@ -790,8 +790,10 @@
             url: "/api/webapi/check/Info",
             dataType: "json",
             success: function (response) {
-                let user = response.userInfo[0];
-                $('.money').text("₹" + user.money);
+                console.log('<<<<<<<,',response)
+                let user = response.userInfo;
+                console.log('>>>>>>>>>>>>>>>',user)
+                $('.money').text("₹" + user);
                 console.log(user);
                 $('.bankBox .box .item:eq(1) div:eq(1)').html(`2. Remaining Betting Amount<br>For Withdrawal: ₹ ${response.result}`);
                 if (!response.datas[0]) return;

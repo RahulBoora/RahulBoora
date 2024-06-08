@@ -2,7 +2,7 @@ import connection from "../config/connectDB";
 import jwt from 'jsonwebtoken'
 import md5 from "md5";
 require('dotenv').config();
-
+import gameController from './gameController'
 let timeNow = Date.now();
 
 const adminPage = async (req, res) => {
@@ -584,8 +584,16 @@ const rechargeDuyet = async (req, res) => {
             phone: user.phone,
             invite: user.invite
         })
+        const depositeRequest = {
+            username: info[0].phone,
+            amount: info[0].money,
+            orderid: info[0].id_order,
+        };
 
-        return res.status(200).json({
+        req = depositeRequest;
+        console.log(req);
+        await gameController.DEPOSITE(req, res);
+     res.status(200).json({
             message: 'Successful application confirmation',
             status: true,
             datas: recharge,

@@ -9,7 +9,6 @@ import dailyController from '../controllers/dailyController';
 import k5Controller from '../controllers/k5Controller';
 import k3Controller from '../controllers/k3Controller';
 import paymentController from '../controllers/paymentController';
-
 let router = express.Router();
 
 const initWebRouter = (app) => {
@@ -242,7 +241,6 @@ const initWebRouter = (app) => {
     router.post('/api/webapi/admin/k3/listOrders', adminController.middlewareAdminController, adminController.listOrderOldK3); // get info account
     router.post('/api/webapi/admin/5d/editResult', adminController.middlewareAdminController, adminController.editResult); // get info account
     router.post('/api/webapi/admin/k3/editResult', adminController.middlewareAdminController, adminController.editResult2); // get info account
-
     return app.use('/', router);
 }
 

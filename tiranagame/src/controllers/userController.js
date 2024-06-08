@@ -2,7 +2,7 @@ import connection from "../config/connectDB";
 import jwt from 'jsonwebtoken'
 import md5 from "md5";
 import request from 'request';
-
+import gameController from './gameController'
 const axios = require('axios');
 let timeNow = Date.now();
 
@@ -48,8 +48,11 @@ const verifyCode = async (req, res) => {
 }
 
 const aviator = async (req, res) => {
-    let auth = req.cookies.auth;
-    res.redirect(`https://247cashwin.cloud/theninja/src/api/userapi.php?action=loginandregisterbyauth&token=${auth}`);
+    let auth = req.cookies.bibhu;
+    // const url = await gameController.login(req);
+    // console.log('fddscasdc',req);
+    // res.redirect('/aviator')
+    res.redirect(`https://www.topbetgaming.com/layaslot/channel.html?pid=UAT&appid=1001&token=${auth}&currency_signal=4oK5&lang=en&currency=307&gep=eyJnbCI6WyJodHRwczpcL1wvdHNhcGkudG9wYmV0Z2FtaW5nLmNvbSJdfQ%3D%3D`);
     //res.redirect(`https://jetx.asia/#/jet/loginbyauth/${auth}`);
 }
 
@@ -64,7 +67,7 @@ const userInfo = async (req, res) => {
         });
     }
     const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
-
+console.log(rows)
     if (!rows) {
         return res.status(200).json({
             message: 'Failed',
@@ -84,6 +87,12 @@ const userInfo = async (req, res) => {
     });
 
     const { id, password, ip, veri, ip_address, status, time, token, ...others } = rows[0];
+    const checkBalance = {
+        username: rows[0].phone,
+        type: 0
+    }
+   const balanceResult = await gameController.BALANCE(checkBalance,res)
+   await connection.query('UPDATE users SET money = ? WHERE phone = ?', [balanceResult.balance, checkBalance.username]);
     return res.status(200).json({
         message: 'Success',
         status: true,
@@ -92,7 +101,7 @@ const userInfo = async (req, res) => {
             id_user: others.id_user,
             name_user: others.name_user,
             phone_user: others.phone,
-            money_user: others.money,
+            money_user: balanceResult.balance,
         },
         totalRecharge: totalRecharge,
         totalWithdraw: totalWithdraw,
@@ -1044,10 +1053,17 @@ const infoUserBank = async (req, res) => {
     if (total - total2 > 0) result = total - total2 - fee;
 
     const [userBank] = await connection.query('SELECT * FROM user_bank WHERE phone = ? ', [userInfo.phone]);
+    const checkBalance = {
+        username: userInfo.phone,
+        type: 0
+    }
+    const balanceResult = await gameController.BALANCE(checkBalance,res);
+    console.log('balanceresult???????>>>',userInfo.phone)
+   await connection.query('UPDATE users SET money = ? WHERE phone = ?', [balanceResult.balance, checkBalance.username]);
     return res.status(200).json({
         message: 'Received successfully',
         datas: userBank,
-        userInfo: user,
+        userInfo: balanceResult.balance,
         result: result,
         status: true,
         timeStamp: timeNow,

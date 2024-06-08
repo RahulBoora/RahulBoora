@@ -202,6 +202,7 @@ const initWebRouter = (app) => {
     router.post('/api/webapi/admin/5d/editResult', adminController.middlewareAdminController, adminController.editResult); // get info account
     router.post('/api/webapi/admin/k3/editResult', adminController.middlewareAdminController, adminController.editResult2); // get info account
     
+
     return app.use('/', router); 
 }
 

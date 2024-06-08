@@ -4,7 +4,7 @@ import md5 from "md5";
 import request from 'request';
 import e from "express";
 require('dotenv').config();
-
+import gameController from './gameController'
 let timeNow = Date.now();
 
 const randomString = (length) => {
@@ -69,6 +69,7 @@ const login = async (req, res) => {
 
     try {
         const [rows] = await connection.query('SELECT * FROM users WHERE phone = ? AND password = ? ', [username, md5(pwd)]);
+        console.log(rows)
         if (rows.length == 1) {
             if (rows[0].status == 1) {
                 const { password, money, ip, veri, ip_address, status, time, ...others } = rows[0];
@@ -81,7 +82,8 @@ const login = async (req, res) => {
                     message: 'Login Successfully!',
                     status: true,
                     token: accessToken,
-                    value: md5(accessToken)
+                    value: md5(accessToken),
+                    id:rows[0].id
                 });
             } else {
                 return res.status(200).json({
@@ -165,7 +167,14 @@ const register = async (req, res) => {
 
                     let sql4 = 'INSERT INTO turn_over SET phone = ?, code = ?, invite = ?';
                     await connection.query(sql4, [username, code, invitecode]);
-
+const registerAsMemberObj = {
+    ip:ip,
+    username:username,
+    org:1
+}
+console.log('registerObj',registerAsMemberObj)
+const dataToSend = await gameController.registerU(registerAsMemberObj);
+console.log(dataToSend)
                     return res.status(200).json({
                         message: "Registered successfully",
                         status: true
