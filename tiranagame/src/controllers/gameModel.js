@@ -48,6 +48,7 @@ const registerMember=async (req) =>{
             org,
             lang:defaultLang
         }
+        console.log('gameApiUrl1',gameApiUrl1)
         const encryptedData = encrypt(dataToEncrypt ,appKey);
         const response = await axios.post(gameApiUrl1, {
             pid: pid,
