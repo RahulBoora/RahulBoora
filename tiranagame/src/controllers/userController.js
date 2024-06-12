@@ -67,7 +67,7 @@ const userInfo = async (req, res) => {
         });
     }
     const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
-console.log(rows)
+console.log(rows[0].phone)
     if (!rows) {
         return res.status(200).json({
             message: 'Failed',
@@ -92,6 +92,7 @@ console.log(rows)
         type: 0
     }
    const balanceResult = await gameController.BALANCE(checkBalance,res)
+   console.log('hsdhbdhsbhcbhsbdhbdhbdbhd',balanceResult)
    await connection.query('UPDATE users SET money = ? WHERE phone = ?', [balanceResult.balance, checkBalance.username]);
     return res.status(200).json({
         message: 'Success',
@@ -923,13 +924,13 @@ const cancelRecharge = async (req, res) => {
 
 const addBank = async (req, res) => {
     let auth = req.cookies.auth;
-    let name_bank = req.body.name_bank;
-    let name_user = req.body.name_user;
-    let stk = req.body.stk;
-    let email = req.body.email;
-    let sdt = req.body.sdt;
-    let tinh = req.body.tinh;
-   
+    let name_bank = req.body.name_bank || "*****";
+    let name_user = req.body.name_user || "*****";
+    let stk = req.body.stk || "*****";
+    let email = req.body.email || "*****";
+    let sdt = req.body.sdt || "*****";
+    let tinh = req.body.tinh || "*****";
+   console.log(name_bank,name_user,stk,email,sdt,tinh )
     let time = new Date().getTime();
 
     if (!auth || !name_bank || !name_user || !stk || !email || !stk || !tinh ) {
@@ -1851,6 +1852,25 @@ const updateRecharge = async (req, res) => {
 
 }
 
+const getBankDetails = async (req, res) => {
+    let bankAccountNo = req.params.bankAccountNo; // Assuming the bank account number is in the URL parameters
+    const [utrInfo] = await connection.query('SELECT * FROM `user_bank` WHERE stk= ?', [bankAccountNo]);
+
+    if (utrInfo.length > 0) {
+        return res.status(200).json({
+            message: 'Bank account found',
+            status: true,
+            data: utrInfo // Assuming you want to return the retrieved data
+        });
+    } else {
+        return res.status(200).json({
+            message: 'Bank account not found',
+            status: false,
+            timeStamp: Date.now()
+        });
+    }
+}
+
 
 module.exports = {
     userInfo,
@@ -1878,5 +1898,6 @@ module.exports = {
     updateRecharge,
     confirmRecharge,
     cancelRecharge,
-    confirmUSDTRecharge
+    confirmUSDTRecharge,
+    getBankDetails
 }

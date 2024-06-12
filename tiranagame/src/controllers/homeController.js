@@ -48,7 +48,9 @@ const checkRecord = async (req, res) => {
 const addBank = async (req, res) => {
     return res.render("wallet/addbank.ejs");
 }
-
+const addBankApi = async (req, res) => {
+    return res.render("wallet/addbankApi.ejs");
+}
 // promotion
 const promotionPage = async (req, res) => {
     return res.render("promotion/promotion.ejs");
@@ -219,4 +221,5 @@ module.exports = {
     recordsalary,
     getSalaryRecord,
     transactionhistoryPage,
+    addBankApi
 }

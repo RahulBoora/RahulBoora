@@ -2,7 +2,7 @@ import gameModel from './gameModel'
 const registerU = async(req, res)=> {
     try {
         console.log('dsjfagdfbwvnbdjvbjsfdbvjfv',req.body);
-        const result = await gameModel.registerMember(req);
+        const result = await gameModel.registerMember(req.body);
         return result
     } catch (error) {
         console.error('Error:', error);

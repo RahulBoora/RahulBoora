@@ -126,7 +126,6 @@
                             <input data-v-7aa0f84a="" type="text" placeholder="Enter Your UPI ID" class="ipt" />
                         </div>
                     </div>
-                   
                     <div data-v-7aa0f84a="" class="item">
                         <div data-v-7aa0f84a="" class="lab">Phone Number</div>
                         <div data-v-7aa0f84a="" class="input">
@@ -141,7 +140,7 @@
                         class="btn van-button van-button--default van-button--normal van-button--block van-button--round">
                         <div data-v-7aa0f84a="" class="van-button__content">
                             <span data-v-7aa0f84a="" class="van-button__text">
-                                Add a bank card
+                               Update bank card
                             </span>
                         </div>
                     </button>
@@ -174,80 +173,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/client.js"></script>
     <script>
-        function alertMess(text, sic) {
-            $('body').append(
-                `
-                <div data-v-1dcba851="" class="msg">
-                    <div data-v-1dcba851="" class="msg-content v-enter-active v-enter-to" style=""> ${text} </div>
-                </div>
-                `
-            );
-            setTimeout(() => {
-                $('.msg .msg-content').removeClass('v-enter-active v-enter-to');
-                $('.msg .msg-content').addClass('v-leave-active v-leave-to');
-                setTimeout(() => {
-                    $('.msg').remove();
-                }, 100);
-                sic.removeClass('block-click');
-            }, 1000);
-        }
-        $('button').click(function (e) {
-    e.preventDefault();
-
-    // Initialize variables to store field values
-    let name_bank = null;
-    let name_user = null;
-    let stk = null;
-    let email = null;
-    let sdt = null;
-    let tinh = null;
-    
-    // Get values from visible fields
-    if ($('.lab:eq(0)').is(":visible")) {
-        name_bank = $('.ipt:eq(0)').val().trim();
-    }
-    if ($('.lab:eq(1)').is(":visible")) {
-        name_user = $('.ipt:eq(1)').val().trim();
-    }
-    if ($('.lab:eq(2)').is(":visible")) {
-        stk = $('.ipt:eq(2)').val().trim();
-    }
-    if ($('.lab:eq(3)').is(":visible")) {
-        email = $('.ipt:eq(3)').val().trim();
-    }
-    if ($('.lab:eq(4)').is(":visible")) {
-        sdt = $('.ipt:eq(4)').val().trim();
-    }
-    if ($('.lab:eq(5)').is(":visible")) {
-        tinh = $('.ipt:eq(5)').val().trim();
-    }
-
-    // Send AJAX request
-    $.ajax({
-        type: "POST",
-        url: "/api/webapi/addBank",
-        data: {
-            name_bank: name_bank,
-            name_user: name_user,
-            stk: stk,
-            email: email,
-            sdt: sdt,
-            tinh: tinh,
-        },
-        dataType: "json",
-        success: function (response) {
-            console.log(response);
-            alertMess(response.message, $(this));
-            setTimeout(() => {
-                if (response.message) {
-                    window.location.href = "/wallet/withdrawal";
-                }
-            }, 1200);
-        }
-    });
-});
-
-        function showBankFields() {
+        $(document).ready(function () {
+            // Function to show only bank-related fields
+            function showBankFields() {
                 $('.ipt').show(); // Show all input fields
                 $('.ipt:eq(4)').hide(); // Hide UPI field
                 $('.lab:eq(4)').hide();
@@ -265,6 +193,8 @@
                 $('.ipt:eq(3)').hide();
                 $('.ipt:eq(5)').hide();
             }
+        
+            // Initial setup based on the selected option in localStorage
             var selectedOption = localStorage.getItem('selectedOption');
             if (selectedOption === 'bank') {
                 showBankFields();
@@ -274,7 +204,103 @@
                 console.log('upi');
             }
         
-    </script>
+            // API endpoint to fetch bank account details
+            let bankAccountNo = localStorage.getItem('stk');
+            const apiUrl = `/api/webapi/getBankDetails/${bankAccountNo}`;
+        
+            // Fetch bank account details from the API
+            $.ajax({
+                type: "GET",
+                url: apiUrl,
+                dataType: "json",
+                success: function (response) {
+                    // Populate the form fields with retrieved data
+                    if (response.status && response.data.length > 0) {
+                        const bankDetails = response.data[0];
+                        $('.ipt:eq(0)').val(bankDetails.name_bank);
+                        $('.ipt:eq(1)').val(bankDetails.name_user);
+                        $('.ipt:eq(2)').val(bankDetails.stk);
+                        $('.ipt:eq(3)').val(bankDetails.email);
+                        $('.ipt:eq(4)').val(bankDetails.sdt);
+                        $('.ipt:eq(5)').val(bankDetails.tinh);
+                    }
+                }
+            });
+        
+            // Handle form submission
+            $('button').click(function (e) {
+                e.preventDefault();
+                let name_bank = $('.ipt:eq(0)').val().trim();
+                let name_user = $('.ipt:eq(1)').val().trim();
+                let stk = $('.ipt:eq(2)').val().trim();
+                let email = $('.ipt:eq(3)').val().trim();
+                let sdt = $('.ipt:eq(4)').val().trim();
+                let tinh = $('.ipt:eq(5)').val().trim();
+                if (name_bank && name_user && stk && email && sdt && tinh) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/webapi/addBank",
+                        data: {
+                            name_bank: name_bank,
+                            name_user: name_user,
+                            stk: stk,
+                            email: email,
+                            sdt: sdt,
+                            tinh: tinh,
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            console.log(response);
+                            alertMess(response.message, $(this));
+                            setTimeout(() => {
+                                if (response.message) {
+                                    window.location.href = "/wallet/withdrawal";
+                                }
+                            }, 1200);
+                        }
+                    });
+                } else {
+                    alertMess('Please enter full information', $(this));
+                }
+            });
+        });
+        
+        function alertMess(text, sic) {
+            $('body').append(
+                `
+                <div data-v-1dcba851="" class="msg">
+                    <div data-v-1dcba851="" class="msg-content v-enter-active v-enter-to" style=""> ${text} </div>
+                </div>
+                `
+            );
+            setTimeout(() => {
+                $('.msg .msg-content').removeClass('v-enter-active v-enter-to');
+                $('.msg .msg-content').addClass('v-leave-active v-leave-to');
+                setTimeout(() => {
+                    $('.msg').remove();
+                }, 100);
+                sic.removeClass('block-click');
+            }, 1000);
+        }
+        
+        document.getElementById('bankOption').addEventListener('click', function () {
+            // Store the selected option in localStorage
+            localStorage.setItem('selectedOption', 'bank');
+        
+            // Show only bank-related fields
+            showBankFields();
+        });
+        
+        document.getElementById('upiOption').addEventListener('click', function () {
+            // Store the selected option in localStorage
+            localStorage.setItem('selectedOption', 'upi');
+        
+            // Show only UPI-related fields
+            showUpiFields();
+        });
+        </script>
+        
+    
 </body>
 
 </html>

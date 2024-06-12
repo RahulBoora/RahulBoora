@@ -49,7 +49,7 @@
                         <i class="fa-light fa-angle-left fa-fade fa-xl center" style="color: #ffffff"></i>
                     </div>
                 </div>
-                <div data-v-106b99c8="" class="navbar-title">Commission History</div>
+                <div data-v-106b99c8="" class="navbar-title">Game History</div>
                 <div data-v-106b99c8="" class="navbar-right"></div>
             </div>
             <div data-v-3966082f="" class="box">
@@ -88,12 +88,28 @@
                             </div>
                         </div>
                     </div>
+                    
                     <!---->
                 </div>
             </div>
+            <style>
+                .profit-positive {
+                    color: rgb(84, 233, 84);
+                }
+            
+                .profit-negative {
+                    color: red;
+                }
+            </style>
+            
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
             <script src="/js/client.js"></script>
             <script>
+                let currentIndex = 0;
+                const count = 10;
+                let loading = false;
+                let allDataLoaded = false;
+
                 function formateT(params) {
                     let result = (params < 10) ? "0" + params : params;
                     return result;
@@ -108,102 +124,122 @@
                     return `${months}-${days} ${hours}:${minutes}`;
                 }
 
-                $('.nav .van-tabbar-item:eq(0) img').attr('src', '/images/home1.png');
-                $('.nav .van-tabbar-item:eq(0) .name').removeClass('action');
-                $('.nav .van-tabbar-item:eq(2) .name').addClass('action');
-
                 function MemRender(datas) {
                     let html = '';
-                    datas.map((data) => {
+                    datas.forEach((data) => {
                         let gameName;
 
-switch (data.app_id) {
-    case 800:
-        gameName = 'Aviator';
-        break;
-    case 801:
-        gameName = 'Aviator 1min';
-        break;
-    case 802:
-        gameName = 'Aviator 3min';
-        break;
-    case 803:
-        gameName = 'Aviator 5min';
-        break;
-        case 100:
-        gameName = 'Boom Mines';
-        break;
-        case 101:
-        gameName = 'HILO';
-        break;
-        case 102:
-        gameName = 'Fair Dice';
-        break;
-        case 103:
-        gameName = 'Plinko';
-        break;
-        case 104:
-        gameName = 'Mini Roulette';
-        break;
-        case 105:
-        gameName = 'Goal';
-        break;
-        case 106:
-        gameName = 'Keno';
-        break;
-        case 107:
-        gameName = 'Hotline';
-        break;
-        case 109:
-        gameName = 'Coin Flip';
-        break;
-        case 110:
-        gameName = 'Limbo';
-        break;
-        case 111:
-        gameName = 'Cryptos';
-        break;
-        case 112:
-        gameName = 'Triple';
-        break;
-        case 114:
-        gameName = 'Horse Racing';
-        break;
-        case 900:
-        gameName = 'Keno 80';
-        break;
+                        switch (data.app_id) {
+                            case 800:
+                                gameName = 'Aviator';
+                                break;
+                            case 801:
+                                gameName = 'Aviator 1min';
+                                break;
+                            case 802:
+                                gameName = 'Aviator 3min';
+                                break;
+                            case 803:
+                                gameName = 'Aviator 5min';
+                                break;
+                            case 100:
+                                gameName = 'Boom Mines';
+                                break;
+                            case 101:
+                                gameName = 'HILO';
+                                break;
+                            case 102:
+                                gameName = 'Fair Dice';
+                                break;
+                            case 103:
+                                gameName = 'Plinko';
+                                break;
+                            case 104:
+                                gameName = 'Mini Roulette';
+                                break;
+                            case 105:
+                                gameName = 'Goal';
+                                break;
+                            case 106:
+                                gameName = 'Keno';
+                                break;
+                            case 107:
+                                gameName = 'Hotline';
+                                break;
+                            case 109:
+                                gameName = 'Coin Flip';
+                                break;
+                            case 110:
+                                gameName = 'Limbo';
+                                break;
+                            case 111:
+                                gameName = 'Cryptos';
+                                break;
+                            case 112:
+                                gameName = 'Triple';
+                                break;
+                            case 114:
+                                gameName = 'Horse Racing';
+                                break;
+                            case 900:
+                                gameName = 'Keno 80';
+                                break;
+                            // Add more cases as needed
+                            default:
+                                gameName = 'Unknown';
+                                break;
+                        }
 
-    // Add more cases as needed
-    default:
-        gameName = 'Unknown';
-        break;
-}
+                        let profitClass = data.profit < 0 ? 'profit-negative' : 'profit-positive';
+
                         html += `
                         <div data-v-14912091="" class="bd van-row" style="overflow:hidden;">
                             <div data-v-14912091="" class="c-tc van-col van-col--6">${formatTime(data.start_time)}</div>
-                            <div data-v-14912091="" class="c-tc van-col van-col--6">${data.profit}</div>
+                            <div data-v-14912091="" class="c-tc van-col van-col--6 ${profitClass}">${data.profit}</div>
                             <div data-v-14912091="" class="c-tc van-col van-col--6">${data.balance}</div>
                             <div data-v-14912091="" class="c-tc van-col van-col--6">${gameName}</div>
                         </div>
                         `;
                     });
-                    $('#van-list').html(html);
-                    console.log(datas);
+                    $('#van-list').append(html);
                 }
 
-                $.ajax({
-                    type: "POST",
-                    url: "/gameLog",
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        index: 0,
-                        count: 10
-                    }),
-                    dataType: "json",
-                    success: function (response) {
-                        MemRender(response.list);
+                function fetchData(index) {
+                    if (loading || allDataLoaded) return;
+                    loading = true;
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/gameLog",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            index: index,
+                            count: count
+                        }),
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.list.length < count) {
+                                allDataLoaded = true;
+                                $('.van-list__finished-text').show();
+                            }
+                            MemRender(response.list);
+                            loading = false;
+                        },
+                        error: function() {
+                            loading = false;
+                        }
+                    });
+                }
+
+                $(window).scroll(function() {
+                    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                        currentIndex++;
+                        fetchData(currentIndex);
                     }
                 });
+
+                // Initial fetch
+                fetchData(currentIndex);
             </script>
 </body>
 

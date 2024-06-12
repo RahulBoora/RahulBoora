@@ -41,6 +41,7 @@ const initWebRouter = (app) => {
     router.get('/wallet/rechargerecord', middlewareController, homeController.rechargerecordPage);
     router.get('/wallet/withdrawalrecord', middlewareController, homeController.withdrawalrecordPage);
     router.get('/wallet/addBank', middlewareController, homeController.addBank);
+    router.get('/wallet/addBankApi', middlewareController, homeController.addBankApi);
 
     router.get('/keFuMenu', middlewareController, homeController.keFuMenu);
 
@@ -93,6 +94,8 @@ const initWebRouter = (app) => {
     router.post('/api/webapi/checkIn', middlewareController, userController.checkInHandling); // register
     router.post('/api/webapi/check/Info', middlewareController, userController.infoUserBank); // register
     router.post('/api/webapi/addBank', middlewareController, userController.addBank); // register
+    router.get('/api/webapi/getBankDetails/:bankAccountNo',  userController.getBankDetails);
+
     router.post('/api/webapi/otp', middlewareController, userController.verifyCode); // register
     router.post('/api/webapi/use/redenvelope', middlewareController, userController.useRedenvelope); // register
 

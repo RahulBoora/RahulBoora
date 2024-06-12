@@ -193,7 +193,7 @@ const BALANCE=async(req)=> {
                 'Content-Type': 'application/json'
             }
         });
-       
+       console.log(response.data)
         if (response.data || response.data.data) {
             const decryptedData = decrypt(response.data.data,appKey);
             return decryptedData;

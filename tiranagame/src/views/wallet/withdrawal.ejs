@@ -175,7 +175,7 @@
             width: calc(33.3% - .26667rem);
             border-radius: .3333rem;
             white-space: nowrap;
-            background-image: linear-gradient(40deg, #e5e7f6 35%, #f5f3fb);
+            background: linear-gradient(180deg, #4675d2 0%, #374992 100%);
             margin-bottom: .26667rem;
             margin-right: .26667rem;
             position: relative
@@ -537,7 +537,29 @@
 #app {
     background: #22275b;
 }
-        
+   
+.item {
+    /* Common styles for all options */
+    padding: 10px;
+}
+
+.item.active {
+    /* Styles for the active option */
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+
+
+/* Additional styles for the "BANK" and "UPI" options */
+#bankOption .c-tc {
+    color: blue;
+}
+
+#upiOption .c-tc {
+    color: green;
+}
+
     </style>
 </head>
 
@@ -590,7 +612,7 @@
                     
                     <div data-v-25d9c352="" class="box">
                         <ul data-v-25d9c352="" class="c-row c-flex-warp">
-                            <li data-v-25d9c352="" class="item action">
+                            <li data-v-25d9c352="" class="item action" id="bankOption">
                                 <div data-v-25d9c352="" class="icon c-row c-row-middle-center">
                                     <i data-v-25d9c352="" class="size van-icon van-icon-pending-payment">
                                         <!---->
@@ -598,13 +620,28 @@
                                 </div>
                                 <div data-v-25d9c352="" class="c-tc">BANK</div>
                                 <div data-v-25d9c352="" class="icons"><i data-v-25d9c352=""
-                                        class="van-icon van-icon-success"
-                                        style="color: rgb(255, 255, 255); font-size: 15px;">
-                                        <!---->
-                                    </i>
+                                    class="van-icon van-icon-success"
+                                    style="color: rgb(255, 255, 255); font-size: 15px;">
+                                    <!---->
+                                </i>
                                 </div>
                             </li>
                             
+                            <li data-v-25d9c352="" class="item" id="upiOption">
+                                <div data-v-25d9c352="" class="icon c-row c-row-middle-center">
+                                    <i data-v-25d9c352="" class="size van-icon van-icon-pending-payment">
+                                        <!---->
+                                    </i>
+                                </div>
+                                <div data-v-25d9c352="" class="c-tc">UPI</div>
+                                <div data-v-25d9c352="" class="icons"><i data-v-25d9c352=""
+                                    class="van-icon van-icon-success"
+                                    style="color: rgb(255, 255, 255); font-size: 15px;">
+                                    <!---->
+                                </i>
+                                </div>
+                                
+                            </li>
                             <li data-v-25d9c352="" class="item">
                                 <div data-v-25d9c352="" class="icon c-row c-row-middle-center">
                                     <i data-v-25d9c352="" class="size van-icon van-icon-pending-payment">
@@ -613,13 +650,13 @@
                                 </div>
                                 <div data-v-25d9c352="" class="c-tc">USDT </br>(COMING SOON)</div>
                                 <div data-v-25d9c352="" class="icons"><i data-v-25d9c352=""
-                                        class="van-icon van-icon-success"
-                                        style="color: rgb(255, 255, 255); font-size: 15px;">
-                                        <!---->
-                                    </i>
+                                    class="van-icon van-icon-success"
+                                    style="color: rgb(255, 255, 255); font-size: 15px;">
+                                    <!---->
+                                </i>
                                 </div>
+                                
                             </li>
-                          
                         </ul>
                     </div>
                 </div>
@@ -778,41 +815,56 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/client.js"></script>
     <script>
-        $('.txtBox .van-image').click(function (e) {
-            e.preventDefault();
-            $(this).addClass('action block-click');
-            setTimeout(() => {
-                $(this).removeClass('action block-click');
-            }, 2500);
-        });
-        $.ajax({
-            type: "POST",
-            url: "/api/webapi/check/Info",
-            dataType: "json",
-            success: function (response) {
-                console.log('<<<<<<<,',response)
-                let user = response.userInfo;
-                console.log('>>>>>>>>>>>>>>>',user)
-                $('.money').text("₹" + user);
-                console.log(user);
-                $('.bankBox .box .item:eq(1) div:eq(1)').html(`2. Remaining Betting Amount<br>For Withdrawal: ₹ ${response.result}`);
-                if (!response.datas[0]) return;
-                let data = response.datas[0];
-                $('.conBox .list').append(
-                    `
-                    <div data-v-25d9c352="" class="item c-row c-row-between c-row-middle-center">
-                        <div data-v-25d9c352="" class="name van-ellipsis">
-                            <span data-v-25d9c352="">${data.stk}</span>
+        $(document).ready(function () {
+            $('.txtBox .van-image').click(function (e) {
+                e.preventDefault();
+                $(this).addClass('action block-click');
+                setTimeout(() => {
+                    $(this).removeClass('action block-click');
+                }, 2500);
+            });
+
+            // Ajax call to retrieve bank details
+            $.ajax({
+                type: "POST",
+                url: "/api/webapi/check/Info",
+                dataType: "json",
+                success: function (response) {
+                    localStorage.setItem('stk', response.datas[0].stk);
+                    let user = response.userInfo;
+                    $('.money').text("₹" + user);
+                    console.log(user);
+                    $('.bankBox .box .item:eq(1) div:eq(1)').html(`2. Remaining Betting Amount<br>For Withdrawal: ₹ ${response.result}`);
+                    if (!response.datas[0]) return;
+                    let data = response.datas[0];
+                    // Append bank details with edit icon
+                    $('.conBox .list').append(
+                        `
+                        <div data-v-25d9c352="" class="item c-row c-row-between c-row-middle-center">
+                            <div data-v-25d9c352="" class="name van-ellipsis">
+                                <span data-v-25d9c352="">${data.stk}</span>
+                            </div>
+                            <div data-v-25d9c352="" class="icon action c-row c-row-middle-center">
+                                <i data-v-25d9c352="" class="van-icon van-icon-success" style="color: #2aaaf3; font-size: 16px;"></i>
+                            </div>
+                            <div data-v-25d9c352="" class="icon action c-row c-row-middle-center edit-icon" style="cursor: pointer;">
+                                <i class="van-icon van-icon-edit" style="color: #2aaaf3; font-size: 16px;"></i>
+                            </div>
                         </div>
-                        <div data-v-25d9c352="" class="icon action c-row c-row-middle-center">
-                            <i data-v-25d9c352="" class="van-icon van-icon-success" style="color: #2aaaf3; font-size: 16px;">
-                                <!---->
-                            </i>
-                        </div>
-                    </div>
-                    `
-                );
-            }
+                        `
+                    );
+
+                    // Click event handler for edit icon
+                    $('.edit-icon').click(function () {
+                        // Redirect to the "account/addbank" page
+                        window.location.href = "/wallet/addBankApi";
+
+                        // Optionally, you can pass some data in the URL to identify the specific bank details to edit
+                        // For example, you can pass the bank ID as a query parameter
+                        // window.location.href = "/account/addbank?bankId=" + data.id;
+                    });
+                }
+            });
         });
     </script>
     <script>
@@ -862,6 +914,36 @@
                 alertMess('Need Minimum Recharge To Withdrawal', $(this));
             }
         });
+        const bankOption = document.querySelector('[data-v-25d9c352=""] .item.action');
+const upiOption = document.querySelector('[data-v-25d9c352=""] .item:not(.action)');
+
+// Add event listeners
+
+
+document.getElementById('bankOption').addEventListener('click', function() {
+    // Remove action class from all options
+    document.querySelectorAll('.item').forEach(function(option) {
+        option.classList.remove('action');
+    });
+
+    // Add action class to the clicked option
+    this.classList.add('action');
+    localStorage.setItem('selectedOption', 'bank');
+
+});
+
+document.getElementById('upiOption').addEventListener('click', function() {
+    // Remove action class from all options
+    document.querySelectorAll('.item').forEach(function(option) {
+        option.classList.remove('action');
+    });
+
+    // Add action class to the clicked option
+    this.classList.add('action');
+    localStorage.setItem('selectedOption', 'upi');
+});
+
+
     </script>
 </body>
 
