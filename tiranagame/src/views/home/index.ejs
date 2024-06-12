@@ -3402,7 +3402,33 @@ style="z-index: 2001;">
             console.error('Login failed or no URL found in the response');
         }
     }
+    async function videoGame(url) {
+        const id = getCookie('id');
+        const queryString = url.split('?')[1];
+        
+        // Create a new URLSearchParams object from the query string
+        const urlParams = new URLSearchParams(queryString);
+        console.log('URL Parameters:', urlParams.toString()); // Debugging line
 
+        const app_id = urlParams.get('app_id');
+        //console.log('App ID:', appId); // Debugging line
+    // Accessing the value of the app_id parameter
+   // const appId = urlParams.get('app_id');
+        const response = await fetch('/login', {
+            method: 'POST',
+            body: JSON.stringify({ id,app_id }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const result = await response.json();
+
+        if (result && result.url) {
+            window.location.href = result.url; // Redirect if login is successful
+        } else {
+            // Handle the case where login failed or no URL in the response
+            console.error('Login failed or no URL found in the response');
+        }
+    }
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);

@@ -1,8 +1,8 @@
-import gameModel from './gameModel'
+import videoGameModel from './videoGameModel'
 const registerU = async(req, res)=> {
     try {
         console.log('dsjfagdfbwvnbdjvbjsfdbvjfv',req.body);
-        const result = await gameModel.registerMember(req.body,res);
+        const result = await videoGameModel.registerMember(req.body,res);
         return result
     } catch (error) {
         console.error('Error:', error);
@@ -12,7 +12,7 @@ const registerU = async(req, res)=> {
 
 const login=async(req, res)=> {
     try {
-        const result = await gameModel.loginMember(req.body,res);
+        const result = await videoGameModel.loginMember(req.body,res);
         
          return result
     } catch (error) {
@@ -23,7 +23,7 @@ const login=async(req, res)=> {
 
 const KICKUSER=async(req, res)=> {
     try {
-        const result = await gameModel.KICKUSER(req.body);
+        const result = await videoGameModel.KICKUSER(req.body);
         res.json(result);
     } catch (error) {
         console.error('Error:', error);
@@ -32,7 +32,7 @@ const KICKUSER=async(req, res)=> {
 }
 const CONTROLUSER=async(req, res)=> {
     try {
-        const result = await gameModel.CONTROLUSER(req.body);
+        const result = await videoGameModel.CONTROLUSER(req.body);
         res.json(result);
     } catch (error) {
         console.error('Error:', error);
@@ -42,7 +42,7 @@ const CONTROLUSER=async(req, res)=> {
 
 const BALANCE=async(req, res)=> {
     try {
-        const result = await gameModel.BALANCE(req);
+        const result = await videoGameModel.BALANCE(req);
         return result;
     } catch (error) {
         console.error('Error:', error);
@@ -53,7 +53,7 @@ const BALANCE=async(req, res)=> {
 const DEPOSITE=async(req, res)=> {
     try {
         console.log('depositecontroller',req);
-        const result = await gameModel.DEPOSITE(req);
+        const result = await videoGameModel.DEPOSITE(req);
         return result
     } catch (error) {
         console.error('Error:', error);
@@ -64,7 +64,7 @@ const DEPOSITE=async(req, res)=> {
 const GAMELOG=async(req, res)=> {
     try {
         console.log(req.body)
-        const result = await gameModel.GAMELOG(req.body,res);
+        const result = await videoGameModel.GAMELOG(req.body,res);
         return result
     } catch (error) {
         console.error('Error:', error);

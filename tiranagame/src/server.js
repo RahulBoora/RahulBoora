@@ -4,6 +4,7 @@ import express from 'express';
 import configViewEngine from './config/configEngine';
 import routes from './routes/web';
 import gameRoute from './routes/webr'
+import videoGameRoute from './routes/webrv'
 import cronJobContronler from './controllers/cronJobContronler';
 import socketIoController from './controllers/socketIoController';
 require('dotenv').config();
@@ -29,10 +30,17 @@ app.use((req, res, next) => {
     next();
 });
 app.get('aviatorgame/aviatr', (req, res) => {
-    console.log('dvjhedfhf');
     if(!req){
         
         res.render('aviatorgame/aviatr')
+    }
+    const appId = req.query.app_id; // Retrieve app_id from query parameters
+    res.render('aviatr', { appId }); // Pass app_id to the EJS template
+});
+app.get('videoGame/aviatr', (req, res) => {
+    if(!req){
+        
+        res.render('videoGame/aviatr')
     }
     const appId = req.query.app_id; // Retrieve app_id from query parameters
     res.render('aviatr', { appId }); // Pass app_id to the EJS template
@@ -41,6 +49,7 @@ app.get('aviatorgame/aviatr', (req, res) => {
 // init Web Routes
 routes.initWebRouter(app);
 gameRoute.gameRouter(app);
+videoGameRoute.videoGameRouter(app)
 
 // Cron game 1 Phut 
 cronJobContronler.cronJobGame1p(io);

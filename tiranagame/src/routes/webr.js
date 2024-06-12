@@ -3,7 +3,7 @@ import gameController from '../controllers/gameController';
 const router = express.Router();
 const gameRouter = (app)=>{
     router.post('/registerU', gameController.registerU);
-    router.post('/login', gameController.login);
+    router.post('/login1', gameController.login);
     router.post('/kickuser', gameController.KICKUSER);
     router.post('/controlUser',gameController.CONTROLUSER);
     router.post('/balance',gameController.BALANCE);
